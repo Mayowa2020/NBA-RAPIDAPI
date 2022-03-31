@@ -4,13 +4,9 @@ const Schema = mongoose.Schema;
 // create Game Results Schema and Model
 const ResultSchema = new Schema(
   {
-    teamId: {
-      type: Number,
-      required: [true, 'Please enter a TeamID']
-    },
     gameId: {
       type: Number,
-      required: [true, 'Please enter a GameID']
+      required: [true, 'Please enter a GameID'],
     },
     homeTeamId: {
       type: Number,
@@ -28,6 +24,7 @@ const ResultSchema = new Schema(
       type: Number,
       required: true,
     },
+    gameDate: { type: String, required: true },
   },
   { timestamps: true }
 );

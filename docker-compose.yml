@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+    react-app:
+        image: react-app
+        build: ./frontend/
+        stdin_open: true
+        ports:
+            - "3000:3000"
+        networks:
+            - mern-app
+        volumes:
+            - /usr/src/app/node_modules
+
+    # Node API Service
+    api-server:
+        build: ./backend/
+        ports:
+            - 8000:8000
+        environment:
+            PORT: 8000
+            USERNAME: user
+            PASSWORD: 123456
+            DATABASE_LOCAL: "mongodb://mongo_db:27017/nba_apidatabase"
+
+        networks:
+            - mern-app
+
+        depends_on:
+            - mongo_db
+
+    # MongoDB Services
+    mongo_db:
+        container_name: db_container
+        image: mongo:latest
+        restart: always
+        networks:
+            - mern-app
+        volumes:
+            - mongo_db:/data/db
+
+networks:
+    mern-app:
+        driver: bridge
+
+volumes:
+    mongo_db: {}

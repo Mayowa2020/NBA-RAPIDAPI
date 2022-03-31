@@ -1,10 +1,10 @@
-const ResultModel = require('../models/ResultModel')
+const ResultModel = require('../models/ResultModel');
+
 const getTotal = (req, res) => {
   const total = async () => {
-    const totalDocuments = await ResultModel.countDocuments({});
-    res.send(`Total Documents: ${totalDocuments}`);
-    console.log(totalDocuments);
-
+    const documents = await ResultModel.countDocuments({});
+    res.status(200).json(documents);
+    // console.log(documents);
   };
 
   total();

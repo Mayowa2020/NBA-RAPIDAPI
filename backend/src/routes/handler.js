@@ -9,6 +9,6 @@ const getTotal = require('../controllers/totalController');
 router.get('/getGames', getGames);
 router.get('/getStats', getStats);
 router.get('/getTeams', getTeams);
-router.get('/total', getTotal);
+router.get('/getTotal', getTotal);
 
 module.exports = router;

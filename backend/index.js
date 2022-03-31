@@ -1,11 +1,10 @@
 const express = require('express');
-const {errorHandler} = require('./src/middleware/errorMiddleware')
+const { errorHandler } = require('./src/middleware/errorMiddleware');
 const morgan = require('morgan');
 const routesHandler = require('./src/routes/handler');
 const Agenda = require('agenda');
 const cors = require('cors');
 
-const MetaModel = require('./src/models/metaModel');
 const ResultModel = require('./src/models/ResultModel');
 
 const app = express();
@@ -51,55 +50,44 @@ agenda.define('get team results', async (job) => {
   };
 
   axios.request(options).then(function (response) {
-    // console.log(response.data.data);
+    console.log(response.data.data, response.data.data.length);
     var stats = response.data.data;
-    var teamStats = stats.filter((stat) => {
-      return stat.game.home_team_id === teamId || stat.game.visitor_team_id === teamId;
-    });
-    for (var i = 0; i < teamStats.length; i++) {
-      const stat = teamStats[i];
-      console.log(stat.game.id, i);
 
-      const teamStat = {
-        teamId,
-        gameId: stat.game.id,
-        homeTeamId: stat.game.home_team_id,
-        homeTeamScore: stat.game.home_team_score,
-        visitorTeamId: stat.game.visitor_team_id,
-        visitorTeamScore: stat.game.visitor_team_score,
-      };
-      ResultModel.create(teamStat);
-      
-    }
-    // MetaModel.find({}, (err, data) => {
-    //     console.log
-    //     if (err) {
-    //          res.json(err);
-    //     } else { res.json(data)}
-    // })
-
-
-    // MetaModel.findById().then(function (data) {
-    //     console.log(data.numOfRecords);
-    //     MetaModel.create({
-    //         numOfRecords: data.numOfRecords + teamStats.length,
-    //     });
+    // var teamStats = stats.filter((stat) => {
+    //   return stat.game.home_team_id === teamId || stat.game.visitor_team_id === teamId;
     // });
-    // teamStatsMap[teamId] = teamStats;
+
+    for (var i = 0; i < stats.length; i++) {
+      const stat = stats[i];
+
+      ResultModel.findOne({ gameId: stat.game.id }, (err, data) => {
+        console.log(data, 'AVOID DUPLICATE');
+        if (data != null) {
+          if (data.game.id != stat.game.id) {
+            const teamStat = {
+              gameId: stat.game.id,
+              homeTeamId: stat.game.home_team_id,
+              homeTeamScore: stat.game.home_team_score,
+              visitorTeamId: stat.game.visitor_team_id,
+              visitorTeamScore: stat.game.visitor_team_score,
+              gameDate: stat.game.date,
+            };
+            console.log('save', i);
+            ResultModel.create(teamStat);
+          } else {
+            return 'data already exists';
+          }
+        }
+      });
+    }
+
     teamId++;
-    // res.send(response.data);
   });
-  // .catch(fu
-  //     // res.status(404).json({
-  //     //     status: "fail",
-  //     //     message: error,
-  //     // });
-  // });
 });
 
 (async function () {
   // IIFE to give access to async/await
   await agenda.start();
 
-  await agenda.every('5 seconds', 'get team results');
+  await agenda.every('10 seconds', 'get team results');
 })();
