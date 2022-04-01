@@ -1,8 +1,8 @@
-## PROJECT
+### PROJECT
 
 NBA RAPID API
 
-## PROJECT DESCRIPTION
+#### PROJECT DESCRIPTION
 
 This project was created to consume the NBA API from RAPID API site (<https://rapidapi.com/theapiguy/api/free-nba/>).
 It's expected to periodically check for the Game Results for each NBA Team and store in a Database.
@@ -11,13 +11,13 @@ The test version is expected to check every 10s and the production version once 
 
 In addition, the frontend provides a page that shows the last time the check was done, and how records are currently in the database.
 
-## BUILT WITH
+#### BUILT WITH
 
 React - Frontend
 NodeJs - Backend
 MongoDB - Database
 
-### GETTING STARTED
+#### GETTING STARTED
 
 Open a terminal(Windows Command Prompt or PowerShell)
 
@@ -28,19 +28,19 @@ Create another folder i.e. mkdir Frontend and enter into that directory: cd Fron
 Create the Backend Folder and cd into it.
 Type "git init -y" and npm i express agenda axios concurrently cors dotenv morgan mongoose
 
-### TO RUN THE APP
+#### TO RUN THE APP
 
 Frontend - npm run client
 Backend - npm run server
 Both Frontend and Backend concurrently - npm run dev
 
-### THE REQUIRED ENDPOINTS
+#### THE REQUIRED ENDPOINTS
 
 localhost:8000/api/getStats -Backend;
 localhost:8000/api/getTotal -Backend;
 localhost:3000 -Frontend
 
-### DOCKERIZE THE APP
+#### DOCKERIZE THE APP
 
 Getting Started with the Integration
 
@@ -59,6 +59,6 @@ At last, we now open <http://localhost:3000> to see our React Frontend.
 The backend server is live on <http://localhost:5000>
 And MongoDB is running on <http://localhost:27017>
 
-## Contact
+##### Contact
 
 Bukky Oyetimehin; <https://github.com/Mayowa2020>;
