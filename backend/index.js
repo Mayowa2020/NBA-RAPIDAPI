@@ -48,37 +48,26 @@ agenda.define('get team results', async (job) => {
       'X-RapidAPI-Key': '03f75e5346mshe102d9b0cdcb5a0p1a7f92jsndd8d5123e45a',
     },
   };
-
   axios.request(options).then(function (response) {
-    console.log(response.data.data, response.data.data.length);
+    // console.log(response.data.data);
     var stats = response.data.data;
+    var teamStats = stats.filter((stat) => {
+      return stat.game.home_team_id === teamId || stat.game.visitor_team_id === teamId;
+    });
+    for (var i = 0; i < teamStats.length; i++) {
+      const stat = teamStats[i];
+      console.log(stat.game.id, i);
 
-    // var teamStats = stats.filter((stat) => {
-    //   return stat.game.home_team_id === teamId || stat.game.visitor_team_id === teamId;
-    // });
-
-    for (var i = 0; i < stats.length; i++) {
-      const stat = stats[i];
-
-      ResultModel.findOne({ gameId: stat.game.id }, (err, data) => {
-        console.log(data, 'AVOID DUPLICATE');
-        if (data != null) {
-          if (data.game.id != stat.game.id) {
-            const teamStat = {
-              gameId: stat.game.id,
-              homeTeamId: stat.game.home_team_id,
-              homeTeamScore: stat.game.home_team_score,
-              visitorTeamId: stat.game.visitor_team_id,
-              visitorTeamScore: stat.game.visitor_team_score,
-              gameDate: stat.game.date,
-            };
-            console.log('save', i);
-            ResultModel.create(teamStat);
-          } else {
-            return 'data already exists';
-          }
-        }
-      });
+      const teamStat = {
+        teamId,
+        gameId: stat.game.id,
+        homeTeamId: stat.game.home_team_id,
+        homeTeamScore: stat.game.home_team_score,
+        visitorTeamId: stat.game.visitor_team_id,
+        visitorTeamScore: stat.game.visitor_team_score,
+        gameDate: stat.game.date,
+      };
+      ResultModel.create(teamStat);
     }
 
     teamId++;

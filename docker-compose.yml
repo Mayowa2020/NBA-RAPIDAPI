@@ -1,46 +1,56 @@
-version: "3.9"
+version: "3.7"
+
 services:
-    react-app:
-        image: react-app
-        build: ./frontend/
-        stdin_open: true
+    server:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        image: myapp-server
+        container_name: myapp-node-server
+        command: /usr/src/app/node_modules/.bin/nodemon server.js
+        volumes:
+            - ./server/:/usr/src/app
+            - /usr/src/app/node_modules
+        ports:
+            - "8000:8000"
+        depends_on:
+            - mongo
+        env_file: ./backend/config.env
+        environment:
+            - NODE_ENV=development
+        networks:
+            - app-network
+    mongo:
+        image: mongo
+        volumes:
+            - data-volume:/data/db
+        ports:
+            - "27017:27017"
+        networks:
+            - app-network
+    client:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        image: myapp-client
+        container_name: myapp-react-client
+        command: npm start
+        volumes:
+            - ./client/:/usr/app
+            - /usr/app/node_modules
+        depends_on:
+            - server
         ports:
             - "3000:3000"
         networks:
-            - mern-app
-        volumes:
-            - /usr/src/app/node_modules
-
-    # Node API Service
-    api-server:
-        build: ./backend/
-        ports:
-            - 8000:8000
-        environment:
-            PORT: 8000
-            USERNAME: user
-            PASSWORD: 123456
-            DATABASE_LOCAL: "mongodb://mongo_db:27017/nba_apidatabase"
-
-        networks:
-            - mern-app
-
-        depends_on:
-            - mongo_db
-
-    # MongoDB Services
-    mongo_db:
-        container_name: db_container
-        image: mongo:latest
-        restart: always
-        networks:
-            - mern-app
-        volumes:
-            - mongo_db:/data/db
+            - app-network
 
 networks:
-    mern-app:
+    app-network:
         driver: bridge
 
 volumes:
-    mongo_db: {}
+    data-volume:
+    node_modules:
+    web-root:
+        driver: local
